@@ -64,11 +64,18 @@ function M.place_signs(bufnr, signs)
     last_update = vim.loop.hrtime(),
   }
 
+  -- Get last line number
+  local buf_line_count = api.nvim_buf_line_count(bufnr)
+
   -- Place new signs
   for _, sign_data in ipairs(signs) do
     local line = sign_data.line - 1 -- Convert to 0-indexed
     local sign_type = sign_data.type
     local sign_config = config.config.signs[sign_type]
+
+    if line >= buf_line_count then
+      goto continue
+    end
 
     if sign_config then
       local opts = {
@@ -100,6 +107,7 @@ function M.place_signs(bufnr, signs)
         )
       end
     end
+      ::continue::
   end
 end
 
